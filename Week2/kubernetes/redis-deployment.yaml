@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: url-shortener-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: url-shortener-redis
+  template:
+    metadata:
+      labels:
+        app: url-shortener-redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine
+        args:
+          - "--requirepass"
+          - "$(REDIS_PASSWORD)"
+        env:
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: redis-secret
+                key: REDIS_PASSWORD
+        ports:
+        - containerPort: 6379
